@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         title: 'Namer App',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
         ),
         home: MyHomePage(),
       ),
@@ -39,17 +39,29 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      body: Column(
-        children: [
-          Text('A random FUCKING COOL idea:'),
-          BigCard(pair: pair),
-          ElevatedButton(
-            onPressed: () => appState.getNext(),
-            child: Text('Next'),
-          ),
-        ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'A cool name cold be...',
+              style: theme.textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 10),
+            BigCard(pair: pair),
+            SizedBox(height: 10),
+            ElevatedButton(
+                onPressed: () => appState.getNext(),
+                child: Text(
+                  'Next',
+                  style: theme.textTheme.headlineSmall,
+                )),
+          ],
+        ),
       ),
     );
   }
@@ -65,9 +77,21 @@ class BigCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Text(pair.asPascalCase),
+    final theme = Theme.of(context);
+
+    final style = theme.textTheme.displayLarge!
+        .copyWith(color: theme.colorScheme.onPrimary);
+
+    return Card(
+      color: theme.colorScheme.primary,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Text(
+          pair.asPascalCase,
+          style: style,
+          semanticsLabel: "${pair.first} ${pair.second}",
+        ),
+      ),
     );
   }
 }
