@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
-        title: 'Namer App',
+        title: 'Vulgo',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.brown),
@@ -26,10 +26,21 @@ class MyApp extends StatelessWidget {
 }
 
 class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
+  var currentWordPair = WordPair.random();
 
   void getNext() {
-    current = WordPair.random();
+    currentWordPair = WordPair.random();
+    notifyListeners();
+  }
+
+  var favorites = <WordPair>[];
+
+  void toggleFavorite() {
+    if (favorites.contains(currentWordPair)) {
+      favorites.remove(currentWordPair);
+    } else {
+      favorites.add(currentWordPair);
+    }
     notifyListeners();
   }
 }
@@ -38,8 +49,15 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
-    var pair = appState.current;
+    var pair = appState.currentWordPair;
     final theme = Theme.of(context);
+
+    IconData icon;
+    if (appState.favorites.contains(pair)) {
+      icon = Icons.favorite;
+    } else {
+      icon = Icons.favorite_border;
+    }
 
     return Scaffold(
       body: Center(
@@ -47,19 +65,35 @@ class MyHomePage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'A cool name cold be...',
+              'Um nome legal seria...',
               style: theme.textTheme.titleLarge,
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 10),
             BigCard(pair: pair),
             SizedBox(height: 10),
-            ElevatedButton(
-                onPressed: () => appState.getNext(),
-                child: Text(
-                  'Next',
-                  style: theme.textTheme.headlineSmall,
-                )),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ElevatedButton.icon(
+                    onPressed: () => appState.toggleFavorite(),
+                    icon: Icon(
+                      icon,
+                      size: 24,
+                    ),
+                    label: Text(
+                      'Favorito',
+                      style: theme.textTheme.headlineSmall,
+                    )),
+                SizedBox(width: 15),
+                ElevatedButton(
+                    onPressed: () => appState.getNext(),
+                    child: Text(
+                      'Próximo',
+                      style: theme.textTheme.headlineSmall,
+                    )),
+              ],
+            ),
           ],
         ),
       ),
