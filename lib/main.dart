@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         return GeneratorPage();
       case 1:
-        return Placeholder();
+        return FavoritesPage();
       default:
         throw UnimplementedError('no widget for index $selectedIndex');
     }
@@ -177,6 +177,34 @@ class BigCard extends StatelessWidget {
           semanticsLabel: "${pair.first} ${pair.second}",
         ),
       ),
+    );
+  }
+}
+
+class FavoritesPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MyAppState>();
+    var favorites = appState.favorites;
+
+    if (favorites.isEmpty) {
+      return Center(
+        child: Text('No favorites yet.'),
+      );
+    }
+
+    return ListView(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Text('You have ${favorites.length} favorites:'),
+        ),
+        for (var pair in favorites)
+          ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text(pair.asPascalCase),
+          ),
+      ],
     );
   }
 }
